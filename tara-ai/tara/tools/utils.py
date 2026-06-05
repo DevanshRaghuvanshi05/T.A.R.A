@@ -26,3 +26,4 @@ def register(mcp):
             "words": len(words),
             "lines": len(lines),
         }
+        
