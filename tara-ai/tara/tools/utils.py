@@ -8,7 +8,7 @@ import json
 def register(mcp):
 
     @mcp.tool()
-    def format_json(data: str) -> str
+    def format_json(data: str) -> str:
         """Pretty-print a JSON string."""
         try:
             parsed = json.loads(data)

@@ -37,7 +37,7 @@ OPENAI_TTS_VOICE   = "nova"
 TTS_SPEED           = 1.15
 
 SARVAM_TTS_LANGUAGE = "en-IN"
-SARVAM_TTS_SPEAKER  = "rahul"
+SARVAM_TTS_SPEAKER  = "kavya"
 
 # MCP server running on host
 MCP_SERVER_PORT = 8000
