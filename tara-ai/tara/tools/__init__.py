@@ -1,9 +1,13 @@
 """
-MCP Prompts — reusable prompt templates exposed to the client.
+Tool registry — imports and registers all tool modules with the MCP server.
+Add new tool modules here as you build them.
 """
 
-from tara.prompts import templates
+from tara.tools import web, system, utils
 
 
-def register_all_prompts(mcp):
-    templates.register(mcp)
+def register_all_tools(mcp):
+    """Register all tool groups onto the MCP server instance."""
+    web.register(mcp)
+    system.register(mcp)
+    utils.register(mcp)

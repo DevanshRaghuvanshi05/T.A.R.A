@@ -1,9 +1,9 @@
 """
-MCP Prompts — reusable prompt templates exposed to the client.
+Resource registry — imports and registers all resource modules with the MCP server.
 """
 
-from tara.prompts import templates
+from tara.resources import data
 
 
-def register_all_prompts(mcp):
-    templates.register(mcp)
+def register_all_resources(mcp):
+    data.register(mcp)
