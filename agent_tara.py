@@ -12,6 +12,8 @@ Run:
 import os
 import logging
 import subprocess
+import asyncio
+import time
 
 from dotenv import load_dotenv
 from livekit.agents import JobContext, WorkerOptions, cli
@@ -317,10 +319,53 @@ async def entrypoint(ctx: JobContext) -> None:
         min_endpointing_delay=_endpointing_delay(),
     )
 
-    await session.start(
-        agent=TaraAgent(stt=stt, llm=llm, tts=tts),
-        room=ctx.room,
-    )
+    last_activity_time = time.time()
+    should_sleep = False
+
+    @session.on("user_input_transcribed")
+    def _on_user_input(msg):
+        nonlocal last_activity_time, should_sleep
+        last_activity_time = time.time()
+        if msg.is_final:
+            text = msg.transcript.lower()
+            if any(phrase in text for phrase in ["go to sleep", "sleep now", "goodbye tara", "go sleep"]):
+                logger.info("Sleep phrase detected in user speech. Preparing to shut down...")
+                should_sleep = True
+
+    @session.on("agent_state_changed")
+    def _on_agent_state(state):
+        nonlocal last_activity_time
+        last_activity_time = time.time()
+
+    async def idle_monitor_task():
+        nonlocal last_activity_time, should_sleep
+        IDLE_TIMEOUT = 30.0  # seconds
+        
+        while True:
+            await asyncio.sleep(1.0)
+            now = time.time()
+            
+            if should_sleep:
+                # Wait 4 seconds for the goodbye response to finish playing
+                await asyncio.sleep(4.0)
+                logger.info("Closing session due to sleep command.")
+                await session.close()
+                break
+                
+            if now - last_activity_time > IDLE_TIMEOUT:
+                logger.info(f"Idle timeout of {IDLE_TIMEOUT}s reached. Closing session...")
+                await session.close()
+                break
+
+    monitor_handle = asyncio.create_task(idle_monitor_task())
+
+    try:
+        await session.start(
+            agent=TaraAgent(stt=stt, llm=llm, tts=tts),
+            room=ctx.room,
+        )
+    finally:
+        monitor_handle.cancel()
 
 
 # ---------------------------------------------------------------------------

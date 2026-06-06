@@ -7,6 +7,42 @@ import xml.etree.ElementTree as ET
 import asyncio  # Required for parallel execution
 import re
 from datetime import datetime
+import sys
+import webbrowser
+
+async def open_url_and_restore_focus(url: str):
+    """
+    Opens a URL in a new browser window/tab and restores focus to the previously
+    active window on Windows, so the user can continue their interaction/prompt.
+    """
+    hwnd = None
+    is_windows = sys.platform == "win32"
+    
+    if is_windows:
+        try:
+            import ctypes
+            hwnd = ctypes.windll.user32.GetForegroundWindow()
+        except Exception:
+            pass
+
+    def _open():
+        try:
+            webbrowser.open_new(url)
+        except Exception:
+            try:
+                webbrowser.open(url)
+            except Exception:
+                pass
+
+    await asyncio.to_thread(_open)
+
+    if is_windows and hwnd:
+        await asyncio.sleep(0.8)
+        try:
+            import ctypes
+            ctypes.windll.user32.SetForegroundWindow(hwnd)
+        except Exception:
+            pass
 
 SEED_FEEDS = [
     'https://feeds.bbci.co.uk/news/world/rss.xml',
@@ -120,11 +156,10 @@ def register(mcp):
         Opens the World Monitor dashboard (worldmonitor.app) in the system's web browser.
         Use this when the user wants a visual overview of global events or a real-time map.
         """
-        import webbrowser
         url = "https://worldmonitor.app/"
         
         try:
-            webbrowser.open(url)
+            await open_url_and_restore_focus(url)
             return "Displaying the World Monitor on your primary screen now."
         except Exception as e:
             return f"I'm unable to initialize the visual monitor: {str(e)}"
@@ -135,11 +170,10 @@ def register(mcp):
         Opens the Finance World Monitor dashboard (finance.worldmonitor.app) in the system's web browser.
         Use this when the user wants a visual overview of global financial markets and trends.
         """
-        import webbrowser
         url = "https://finance.worldmonitor.app/"
 
         try:
-            webbrowser.open(url)
+            await open_url_and_restore_focus(url)
             return "Displaying the Finance World Monitor on your primary screen now."
         except Exception as e:
             return f"I'm unable to initialize the finance monitor: {str(e)}"
