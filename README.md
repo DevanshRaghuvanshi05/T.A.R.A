@@ -1,35 +1,39 @@
 # T.A.R.A
 
- T.A.R.A. — Personal AI Assistant
+T.A.R.A. — Personal AI Assistant
 
-> *"Your personal AI assistant, serving Devansh Raghuvanshi"*
+> *"Your personal AI assistant, serving Devaansh Raghuvanshi"*
 
 A personal AI assistant split into two cooperating pieces:
 
 | Component | What it is |
 |-----------|-----------|
 | **MCP Server** (`uv run tara`) | A [FastMCP](https://github.com/jlowin/fastmcp) server that exposes tools (news, web search, system info, …) over SSE. The backend that does the actual work. |
-| **Voice Agent** (`uv run tara_voice`) | A [LiveKit Agents](https://github.com/livekit/agents) voice pipeline that listens to your microphone, reasons with an LLM (Gemini 2.5 Flash by default), and speaks back with OpenAI TTS — all while pulling tools from the MCP server in real time. |
+| **Voice Agent** (`uv run tara_voice`) | A [LiveKit Agents](https://github.com/livekit/agents) voice pipeline that listens to your microphone, reasons with an LLM (Gemini 2.5 Flash), and speaks back with Sarvam TTS — all while pulling tools from the MCP server in real time. |
 
 ## How it works
+
 Microphone ──► STT (Sarvam Saaras v3)
 │
 ▼
 LLM (Gemini 2.5 Flash)  ◄──────► MCP Server (FastMCP / SSE)
 │                              ├─ get_world_news
 ▼                              ├─ open_world_monitor
-TTS (OpenAI nova)                     ├─ search_web
+TTS (Sarvam Bulbul v3)                     ├─ search_web
 │                              └─ …more tools
 ▼
 Speaker / LiveKit room
+
 The voice agent connects to the MCP server via SSE at `http://127.0.0.1:8000/sse`.
 
 ---
 
 ## Project structure
+
 Tara/
 ├── server.py           # uv run tara  → starts the MCP server (SSE on :8000)
 ├── agent_tara.py       # uv run tara_voice → starts the LiveKit voice agent
+├── clap_wake.py        # clap-to-wake feature — clap to start a TARA session
 ├── pyproject.toml
 ├── .env.example        # copy → .env and fill in your keys
 │
@@ -49,7 +53,7 @@ Tara/
 ### 1. Prerequisites
 
 - Python ≥ 3.11
-- [`uv`](https://github.com/astral-sh/uv) — `pip install uv` or `curl -Lsf https://astral.sh/uv/install.sh | sh`
+- [`uv`](https://github.com/astral-sh/uv) — `pip install uv`
 - A [LiveKit Cloud](https://cloud.livekit.io) project (free tier works)
 
 ### 2. Set up environment
@@ -77,7 +81,14 @@ uv run tara_voice
 
 Starts the LiveKit voice agent in **dev mode**. Open the [LiveKit Agents Playground](https://agents-playground.livekit.io) and connect to your room to talk to TARA.
 
----
+**Optional — Clap to Wake**
+
+```bash
+uv run python clap_wake.py
+```
+
+Clap loudly to wake up T.A.R.A. and start a voice session automatically!
+
 
 ## `uv run tara` vs `uv run tara_voice`
 
@@ -88,7 +99,6 @@ Starts the LiveKit voice agent in **dev mode**. Open the [LiveKit Agents Playgro
 
 > Both processes must run **simultaneously**.
 
----
 
 ## Environment variables
 
@@ -99,13 +109,11 @@ Copy `.env.example` → `.env` and fill in the values below.
 | `LIVEKIT_URL` | ✅ | [LiveKit Cloud dashboard](https://cloud.livekit.io) |
 | `LIVEKIT_API_KEY` | ✅ | LiveKit Cloud → API Keys |
 | `LIVEKIT_API_SECRET` | ✅ | LiveKit Cloud → API Keys |
-| `SARVAM_API_KEY` | ✅ (default STT) | [dashboard.sarvam.ai](https://dashboard.sarvam.ai) |
-| `OPENAI_API_KEY` | ✅ (default TTS) | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) |
-| `GOOGLE_API_KEY` | ✅ (default LLM) | [aistudio.google.com](https://aistudio.google.com/projects) |
+| `SARVAM_API_KEY` | ✅ | [dashboard.sarvam.ai](https://dashboard.sarvam.ai) |
+| `GOOGLE_API_KEY` | ✅ | [aistudio.google.com](https://aistudio.google.com/projects) |
 | `GROQ_API_KEY` | optional | [console.groq.com](https://console.groq.com) |
 | `DEEPGRAM_API_KEY` | optional | [console.deepgram.com](https://console.deepgram.com) |
 
----
 
 ## Switching providers
 
@@ -114,10 +122,8 @@ Open `agent_tara.py` and change the provider constants at the top:
 ```python
 STT_PROVIDER = "sarvam"   # "sarvam" | "whisper"
 LLM_PROVIDER = "gemini"   # "gemini" | "openai"
-TTS_PROVIDER = "openai"   # "openai" | "sarvam"
+TTS_PROVIDER = "sarvam"   # "sarvam"
 ```
-
----
 
 ## Adding a new tool
 
@@ -133,5 +139,8 @@ TTS_PROVIDER = "openai"   # "openai" | "sarvam"
 - **[LiveKit Agents](https://github.com/livekit/agents)** — real-time voice pipeline
 - **Sarvam Saaras v3** — STT
 - **Google Gemini 2.5 Flash** — LLM
-- **OpenAI TTS** (`nova` voice) — TTS
+- **Sarvam Bulbul v3** — TTS
 - **[uv](https://github.com/astral-sh/uv)** — fast Python package manager
+
+
+
