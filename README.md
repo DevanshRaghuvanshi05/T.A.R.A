@@ -111,8 +111,6 @@ Copy `.env.example` → `.env` and fill in the values below.
 | `LIVEKIT_API_SECRET` | ✅ | LiveKit Cloud → API Keys |
 | `SARVAM_API_KEY` | ✅ | [dashboard.sarvam.ai](https://dashboard.sarvam.ai) |
 | `GOOGLE_API_KEY` | ✅ | [aistudio.google.com](https://aistudio.google.com/projects) |
-| `GROQ_API_KEY` | optional | [console.groq.com](https://console.groq.com) |
-| `DEEPGRAM_API_KEY` | optional | [console.deepgram.com](https://console.deepgram.com) |
 
 
 ## Switching providers
@@ -120,9 +118,9 @@ Copy `.env.example` → `.env` and fill in the values below.
 Open `agent_tara.py` and change the provider constants at the top:
 
 ```python
-STT_PROVIDER = "sarvam"   # "sarvam" | "whisper"
-LLM_PROVIDER = "gemini"   # "gemini" | "openai"
-TTS_PROVIDER = "sarvam"   # "sarvam"
+STT_PROVIDER = "sarvam"   
+LLM_PROVIDER = "gemini"   
+TTS_PROVIDER = "sarvam"  
 ```
 
 ## Adding a new tool
