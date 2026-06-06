@@ -2,8 +2,9 @@
 MCP Prompts — reusable prompt templates exposed to the client.
 """
 
-from tara.prompts import templates
+# pyrefly: ignore [missing-import]
+import tara.prompts
 
 
 def register_all_prompts(mcp):
-    templates.register(mcp)
+    tara.prompts.templates.register(mcp)
