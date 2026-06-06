@@ -2,7 +2,7 @@
 
 T.A.R.A. — Personal AI Assistant
 
-> *"Your personal AI assistant, serving Devaansh Raghuvanshi"*
+> *"Your personal AI assistant, serving Devansh Raghuvanshi"*
 
 A personal AI assistant split into two cooperating pieces:
 
