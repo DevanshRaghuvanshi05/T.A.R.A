@@ -9,17 +9,17 @@ A personal AI assistant split into two cooperating pieces:
 | Component | What it is |
 |-----------|-----------|
 | **MCP Server** (`uv run tara`) | A [FastMCP](https://github.com/jlowin/fastmcp) server that exposes tools (news, web search, system info, …) over SSE. The backend that does the actual work. |
-| **Voice Agent** (`uv run tara_voice`) | A [LiveKit Agents](https://github.com/livekit/agents) voice pipeline that listens to your microphone, reasons with an LLM (Gemini 2.5 Flash), and speaks back with Sarvam TTS — all while pulling tools from the MCP server in real time. |
+| **Voice Agent** (`uv run tara_voice`) | A [LiveKit Agents](https://github.com/livekit/agents) voice pipeline that listens to your microphone, reasons with an LLM (Gemini 2.5 Flash), and speaks back with Groq TTS — all while pulling tools from the MCP server in real time. |
 
 ## How it works
 
-Microphone ──► STT (Sarvam Saaras v3)
+Microphone ──► STT (Groq Whisper)
 │
 ▼
 LLM (Gemini 2.5 Flash)  ◄──────► MCP Server (FastMCP / SSE)
 │                              ├─ get_world_news
 ▼                              ├─ open_world_monitor
-TTS (Sarvam Bulbul v3)                     ├─ search_web
+TTS (Groq Orpheus TTS)                     ├─ search_web
 │                              └─ …more tools
 ▼
 Speaker / LiveKit room
@@ -118,9 +118,9 @@ Copy `.env.example` → `.env` and fill in the values below.
 Open `agent_tara.py` and change the provider constants at the top:
 
 ```python
-STT_PROVIDER = "sarvam"   
+STT_PROVIDER = "groq"   
 LLM_PROVIDER = "gemini"   
-TTS_PROVIDER = "sarvam"  
+TTS_PROVIDER = "groq"  
 ```
 
 ## Adding a new tool
@@ -135,10 +135,7 @@ TTS_PROVIDER = "sarvam"
 
 - **[FastMCP](https://github.com/jlowin/fastmcp)** — MCP server framework
 - **[LiveKit Agents](https://github.com/livekit/agents)** — real-time voice pipeline
-- **Sarvam Saaras v3** — STT
-- **Google Gemini 2.5 Flash** — LLM
-- **Sarvam Bulbul v3** — TTS
+- Groq Whisper — STT
+- Google Gemini 2.5 Flash — LLM
+- Groq Orpheus — TTS
 - **[uv](https://github.com/astral-sh/uv)** — fast Python package manager
-
-
-

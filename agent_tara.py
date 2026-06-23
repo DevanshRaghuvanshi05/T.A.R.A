@@ -29,7 +29,7 @@ from livekit.plugins import google as lk_google, openai as lk_openai, sarvam, si
 
 STT_PROVIDER       = "groq"
 LLM_PROVIDER       = "gemini"
-TTS_PROVIDER       = "sarvam"
+TTS_PROVIDER       = "groq"
 
 GEMINI_LLM_MODEL   = "gemini-2.5-flash"
 OPENAI_LLM_MODEL   = "gpt-4o"
@@ -236,6 +236,9 @@ def _build_tts():
     elif TTS_PROVIDER == "openai":
         logger.info("TTS → OpenAI TTS (%s / %s)", OPENAI_TTS_MODEL, OPENAI_TTS_VOICE)
         return lk_openai.TTS(model=OPENAI_TTS_MODEL, voice=OPENAI_TTS_VOICE, speed=TTS_SPEED)
+    elif TTS_PROVIDER == "groq":
+        logger.info("TTS → Groq Orpheus TTS")
+        return groq.TTS(api_key=os.getenv("GROQ_API_KEY"))
     else:
         raise ValueError(f"Unknown TTS_PROVIDER: {TTS_PROVIDER!r}")
 
