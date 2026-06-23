@@ -256,7 +256,7 @@ class TaraAgent(Agent):
             stt=stt,
             llm=llm,
             tts=tts,
-            vad=silero.VAD.load(),
+            vad=silero.VAD.load(min_silence_duration=0.08),
             mcp_servers=[
                 mcp.MCPServerHTTP(
                     url=_mcp_server_url(),
@@ -304,7 +304,7 @@ def _turn_detection() -> str:
 
 
 def _endpointing_delay() -> float:
-    return {"sarvam": 0.07, "whisper": 0.3, "groq": 0.3}.get(STT_PROVIDER, 0.1)
+    return {"sarvam": 0.07, "whisper": 0.3, "groq": 0.08}.get(STT_PROVIDER, 0.1)
 
 
 async def entrypoint(ctx: JobContext) -> None:
