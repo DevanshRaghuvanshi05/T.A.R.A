@@ -21,13 +21,13 @@ from livekit.agents.voice import Agent, AgentSession
 from livekit.agents.llm import mcp
 
 # Plugins
-from livekit.plugins import google as lk_google, openai as lk_openai, sarvam, silero
+from livekit.plugins import google as lk_google, openai as lk_openai, sarvam, silero, groq
 
 # ---------------------------------------------------------------------------
 # CONFIG
 # ---------------------------------------------------------------------------
 
-STT_PROVIDER       = "sarvam"
+STT_PROVIDER       = "groq"
 LLM_PROVIDER       = "gemini"
 TTS_PROVIDER       = "sarvam"
 
@@ -206,6 +206,9 @@ def _build_stt():
     elif STT_PROVIDER == "whisper":
         logger.info("STT → OpenAI Whisper")
         return lk_openai.STT(model="whisper-1")
+    elif STT_PROVIDER == "groq":
+        logger.info("STT → Groq Whisper")
+        return groq.STT(model="whisper-large-v3-turbo", api_key=os.getenv("GROQ_API_KEY"))
     else:
         raise ValueError(f"Unknown STT_PROVIDER: {STT_PROVIDER!r}")
 
@@ -301,7 +304,7 @@ def _turn_detection() -> str:
 
 
 def _endpointing_delay() -> float:
-    return {"sarvam": 0.07, "whisper": 0.3}.get(STT_PROVIDER, 0.1)
+    return {"sarvam": 0.07, "whisper": 0.3, "groq": 0.3}.get(STT_PROVIDER, 0.1)
 
 
 async def entrypoint(ctx: JobContext) -> None:
