@@ -372,7 +372,27 @@ async def entrypoint(ctx: JobContext) -> None:
 # Main
 # ---------------------------------------------------------------------------
 
+def _auto_open_browser():
+    """Automatically open the browser/Chrome to the LiveKit playground for voice input in dev mode."""
+    import sys
+    if "dev" in sys.argv:
+        import threading
+        import time
+        import webbrowser
+
+        def open_browser():
+            time.sleep(3.0)
+            url = "https://agents-playground.livekit.io/"
+            logger.info("Automatically opening Chrome/default browser for voice input: %s", url)
+            try:
+                webbrowser.open(url)
+            except Exception as e:
+                logger.error("Failed to automatically open browser: %s", e)
+
+        threading.Thread(target=open_browser, daemon=True).start()
+
 def main():
+    _auto_open_browser()
     cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint))
 
 def dev():
