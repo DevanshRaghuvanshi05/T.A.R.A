@@ -33,7 +33,6 @@ The voice agent connects to the MCP server via SSE at `http://127.0.0.1:8000/sse
 Tara/
 ├── server.py           # uv run tara  → starts the MCP server (SSE on :8000)
 ├── agent_tara.py       # uv run tara_voice → starts the LiveKit voice agent
-├── clap_wake.py        # clap-to-wake feature — clap to start a TARA session
 ├── pyproject.toml
 ├── .env.example        # copy → .env and fill in your keys
 │
@@ -80,15 +79,6 @@ uv run tara_voice
 ```
 
 Starts the LiveKit voice agent in **dev mode**. Open the [LiveKit Agents Playground](https://agents-playground.livekit.io) and connect to your room to talk to TARA.
-
-**Optional — Clap to Wake**
-
-```bash
-uv run python clap_wake.py
-```
-
-Clap loudly to wake up T.A.R.A. and start a voice session automatically!
-
 
 ## `uv run tara` vs `uv run tara_voice`
 
