@@ -177,3 +177,38 @@ def register(mcp):
             return "Displaying the Finance World Monitor on your primary screen now."
         except Exception as e:
             return f"I'm unable to initialize the finance monitor: {str(e)}"
+
+    @mcp.tool()
+    async def open_youtube(query: str = "") -> str:
+        """
+        Opens YouTube in the web browser.
+        If a search query is provided, opens YouTube search results for that query.
+        """
+        if query and query.strip():
+            import urllib.parse
+            encoded_query = urllib.parse.quote_plus(query.strip())
+            url = f"https://www.youtube.com/results?search_query={encoded_query}"
+            msg = f"Opening YouTube search for '{query}' on your primary screen now."
+        else:
+            url = "https://www.youtube.com"
+            msg = "Opening YouTube on your primary screen now."
+
+        try:
+            await open_url_and_restore_focus(url)
+            return msg
+        except Exception as e:
+            return f"I'm unable to open YouTube: {str(e)}"
+
+    @mcp.tool()
+    async def open_whatsapp() -> str:
+        """
+        Opens WhatsApp Web (web.whatsapp.com) in the web browser.
+        Use this when the user asks to open or check WhatsApp.
+        """
+        url = "https://web.whatsapp.com/"
+
+        try:
+            await open_url_and_restore_focus(url)
+            return "Opening WhatsApp Web on your primary screen now."
+        except Exception as e:
+            return f"I'm unable to open WhatsApp Web: {str(e)}"
